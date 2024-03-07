@@ -4,7 +4,7 @@
 		"description": "testing",
 		"activities": [
 			{
-				"name": "Simply Copy File",
+				"name": "Simply Copy CSV File",
 				"description": "tetsing",
 				"type": "Copy",
 				"dependsOn": [],
