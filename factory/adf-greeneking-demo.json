@@ -1,0 +1,9 @@
+{
+	"name": "adf-greeneking-demo",
+	"location": "polandcentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "b50dfa45-80e0-4d86-a9ca-da172d2413dd",
+		"tenantId": "544f8ac3-ce4c-47d1-9b72-284ac54b8d1c"
+	}
+}
