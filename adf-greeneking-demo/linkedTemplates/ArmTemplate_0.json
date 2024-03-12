@@ -178,10 +178,42 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "Setting FirstName",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Simply Copy CSV File",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "UserProperty",
+								"value": "value for user property"
+							}
+						],
+						"typeProperties": {
+							"variableName": "FirstName",
+							"value": "Slava"
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"FirstName": {
+						"type": "String",
+						"defaultValue": "No-Name"
+					}
 				},
 				"folder": {
 					"name": "PipelinesFolder01"
