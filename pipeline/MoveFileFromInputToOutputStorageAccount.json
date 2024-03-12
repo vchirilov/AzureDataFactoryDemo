@@ -60,7 +60,10 @@
 						"referenceName": "OutputArchiveFolder",
 						"type": "DatasetReference",
 						"parameters": {
-							"ArchiveFileName": "email-copy.csv"
+							"ArchiveFileName": {
+								"value": "concat(variables('FirstName'),'.csv')",
+								"type": "Expression"
+							}
 						}
 					}
 				]
