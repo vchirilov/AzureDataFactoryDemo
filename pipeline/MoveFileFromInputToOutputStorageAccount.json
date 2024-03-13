@@ -9,7 +9,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Setting FirstName",
+						"activity": "Setting FirstName 2",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -68,7 +68,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"ArchiveFileName": {
-								"value": "concat(variables('FirstName'),'.csv')",
+								"value": "@concat(variables('FirstName'),'.csv')",
 								"type": "Expression"
 							}
 						}
@@ -76,7 +76,7 @@
 				]
 			},
 			{
-				"name": "Setting FirstName",
+				"name": "Setting FirstName 2",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"policy": {
