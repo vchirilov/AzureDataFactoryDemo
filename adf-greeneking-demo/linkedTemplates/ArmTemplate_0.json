@@ -483,7 +483,14 @@
 					{
 						"name": "Setting FirstName 2",
 						"type": "SetVariable",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Delete contact file",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"secureOutput": false,
 							"secureInput": false
@@ -497,6 +504,35 @@
 						"typeProperties": {
 							"variableName": "FirstName",
 							"value": "Slava"
+						}
+					},
+					{
+						"name": "Delete contact file",
+						"type": "Delete",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "OutputArchiveFolder",
+								"type": "DatasetReference",
+								"parameters": {
+									"ArchiveFileName": "some-text"
+								}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"wildcardFileName": "*contact*",
+								"enablePartitionDiscovery": false
+							}
 						}
 					}
 				],
