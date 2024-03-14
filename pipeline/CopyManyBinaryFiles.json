@@ -27,11 +27,23 @@
 							"type": "BinaryReadSettings"
 						}
 					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						}
+					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
-						"referenceName": "BinaryDataSet",
+						"referenceName": "InputBinaryDataSet",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "OutputBinaryDataSet",
 						"type": "DatasetReference"
 					}
 				]

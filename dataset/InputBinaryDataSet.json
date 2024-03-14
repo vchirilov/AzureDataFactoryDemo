@@ -1,14 +1,10 @@
 {
-	"name": "BinaryDataSet",
+	"name": "InputBinaryDataSet",
 	"properties": {
+		"description": "no description",
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorageLinkedService",
 			"type": "LinkedServiceReference"
-		},
-		"parameters": {
-			"Param_BinaryFile_FileName": {
-				"type": "string"
-			}
 		},
 		"annotations": [],
 		"type": "Binary",
