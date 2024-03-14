@@ -1,6 +1,7 @@
 {
-	"name": "pipeline1",
+	"name": "CopyManyBinaryFiles",
 	"properties": {
+		"description": "no description",
 		"activities": [
 			{
 				"name": "Copy files from folder",
