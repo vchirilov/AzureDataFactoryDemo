@@ -80,7 +80,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Delete1",
+						"activity": "Delete contact file",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -102,7 +102,7 @@
 				}
 			},
 			{
-				"name": "Delete1",
+				"name": "Delete contact file",
 				"type": "Delete",
 				"dependsOn": [],
 				"policy": {
