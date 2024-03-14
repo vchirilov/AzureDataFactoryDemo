@@ -121,7 +121,7 @@
 							"ArchiveFileName": "some-text"
 						}
 					},
-					"enableLogging": true,
+					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
