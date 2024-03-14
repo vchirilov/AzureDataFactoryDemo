@@ -49,7 +49,8 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "My Login Email;Identifier;One-time password;Recovery code;First name;Last name;The Department;The Location",
+									"name": "Login email;Identifier;One-time password;Recovery code;First name;Last name;Department;Location",
+									"type": "String",
 									"physicalType": "String"
 								}
 							}
