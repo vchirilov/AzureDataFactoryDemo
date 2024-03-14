@@ -14,7 +14,20 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "input-folder/MyFolder/"
+					},
+					{
+						"name": "Destination",
+						"value": "output-folder/TargetFolder/"
+					},
+					{
+						"name": "Author",
+						"value": "Veaceslav"
+					}
+				],
 				"typeProperties": {
 					"source": {
 						"type": "BinarySource",
