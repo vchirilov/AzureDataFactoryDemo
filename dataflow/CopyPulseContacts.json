@@ -8,9 +8,9 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"linkedService": {
-						"referenceName": "Win10Pro_LinkedService",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "AdventureWorks2022_Dataset",
+						"type": "DatasetReference"
 					},
 					"name": "PulseContactsSqlDataSource"
 				}
@@ -27,12 +27,29 @@
 			],
 			"transformations": [],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          BusinessEntityID as integer,",
+				"          NationalIDNumber as string,",
+				"          LoginID as string,",
+				"          OrganizationNode as binary,",
+				"          OrganizationLevel as integer,",
+				"          JobTitle as string,",
+				"          BirthDate as date,",
+				"          MaritalStatus as string,",
+				"          Gender as string,",
+				"          HireDate as date,",
+				"          SalariedFlag as boolean,",
+				"          VacationHours as integer,",
+				"          SickLeaveHours as integer,",
+				"          CurrentFlag as boolean,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'query',",
-				"     store: 'sqlserver',",
-				"     query: 'SELECT TOP (100) \\n     [AddressID]\\n      ,[AddressLine1]\\n      ,[City]\\n      ,[ModifiedDate]\\n  FROM [AdventureWorks2022].[Person].[Address]',",
-				"     isolationLevel: 'READ_UNCOMMITTED') ~> PulseContactsSqlDataSource",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT TOP (100) \\n     [AddressID]\\n      ,[AddressLine1]\\n      ,[City]\\n      ,[ModifiedDate]\\n  FROM [AdventureWorks2022].[Person].[Address]\\n  ',",
+				"     format: 'query') ~> PulseContactsSqlDataSource",
 				"PulseContactsSqlDataSource sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
