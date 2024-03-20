@@ -1,0 +1,44 @@
+{
+	"name": "PulseContacts_Dataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "PulseContactsToIseries"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "PulseContacts.csv",
+				"folderPath": "output",
+				"container": "pulse-contacts-to-iseries"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "AddressID",
+				"type": "String"
+			},
+			{
+				"name": " AddressLine1",
+				"type": "String"
+			},
+			{
+				"name": " City",
+				"type": "String"
+			},
+			{
+				"name": " ModifiedDate",
+				"type": "String"
+			}
+		]
+	}
+}

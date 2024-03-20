@@ -1,0 +1,49 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"folder": {
+			"name": "PulseContactsToIseries"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "Win10Pro_LinkedService",
+						"type": "LinkedServiceReference"
+					},
+					"name": "PulseContactsSqlDataSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "PulseContacts_Dataset",
+						"type": "DatasetReference"
+					},
+					"name": "PulseContacts",
+					"description": "PulseContacts.csv file"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'SELECT TOP (100) \\n     [AddressID]\\n      ,[AddressLine1]\\n      ,[City]\\n      ,[ModifiedDate]\\n  FROM [AdventureWorks2022].[Person].[Address]',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> PulseContactsSqlDataSource",
+				"PulseContactsSqlDataSource sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AddressID as string,",
+				"          { AddressLine1} as string,",
+				"          { City} as string,",
+				"          { ModifiedDate} as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> PulseContacts"
+			]
+		}
+	}
+}
