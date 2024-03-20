@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT TOP (100) \n\t[AddressID]\n      ,[AddressLine1]\n      ,[City]\n      ,[ModifiedDate]\n  FROM [AdventureWorks2022].[Person].[Address]\n  ",
+						"sqlReaderQuery": "SELECT TOP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[Address]\n  ",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
