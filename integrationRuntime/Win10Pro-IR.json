@@ -1,0 +1,7 @@
+{
+	"name": "Win10Pro-IR",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "IR to my virtual machine on Win10Pro"
+	}
+}
