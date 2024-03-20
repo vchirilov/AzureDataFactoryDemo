@@ -8,6 +8,12 @@
 		"AzureBlobStorageLinkedService_connectionString": {
 			"value": ""
 		},
+		"AzureSqlDatabase_connectionString": {
+			"value": ""
+		},
+		"Win10Pro_LinkedService_connectionString": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},

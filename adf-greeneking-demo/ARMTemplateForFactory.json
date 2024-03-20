@@ -10,6 +10,14 @@
 		"AzureBlobStorageLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
+		},
+		"AzureSqlDatabase_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
+		},
+		"Win10Pro_LinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
 		}
 	},
 	"variables": {
@@ -17,14 +25,13 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyCsvFileAndChangeMapping')]",
+			"name": "[concat(parameters('factoryName'), '/PulseContactsToIseries')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "no description",
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "CopyPulseContacts",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -37,15 +44,10 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT TOP (100) \n\t[AddressID]\n      ,[AddressLine1]\n      ,[City]\n      ,[ModifiedDate]\n  FROM [AdventureWorks2022].[Person].[Address]\n  ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
 							},
 							"sink": {
 								"type": "DelimitedTextSink",
@@ -64,12 +66,48 @@
 								"mappings": [
 									{
 										"source": {
-											"name": "Login email;Identifier;One-time password;Recovery code;First name;Last name;Department;Location",
-											"type": "String",
-											"physicalType": "String"
+											"name": "AddressID",
+											"type": "Int32",
+											"physicalType": "int"
 										},
 										"sink": {
-											"name": "Login email;Identifier;One-time password;Recovery code;First name;Last name;Department;Location",
+											"name": "AddressID",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "AddressLine1",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "AddressLine1",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ModifiedDate",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										},
+										"sink": {
+											"name": "ModifiedDate",
 											"type": "String",
 											"physicalType": "String"
 										}
@@ -84,14 +122,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "DataSetWithInputCsvFile",
+								"referenceName": "AdventureWorks2022_Dataset",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DataWithOutputCsvFile",
+								"referenceName": "PulseContacts_Dataset",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -102,379 +140,112 @@
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "PipelinesFolder01"
+					"name": "PulseIntegration"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DataSetWithInputCsvFile')]",
-				"[concat(variables('factoryId'), '/datasets/DataWithOutputCsvFile')]"
+				"[concat(variables('factoryId'), '/datasets/AdventureWorks2022_Dataset')]",
+				"[concat(variables('factoryId'), '/datasets/PulseContacts_Dataset')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyManyBinaryFiles')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/AdventureWorks2022_Dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "no description",
-				"activities": [
-					{
-						"name": "Copy files from folder",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "input-folder/MyFolder/"
-							},
-							{
-								"name": "Destination",
-								"value": "output-folder/TargetFolder/"
-							},
-							{
-								"name": "Author",
-								"value": "Veaceslav"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"deleteFilesAfterCompletion": false
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "InputBinaryDataSet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "OutputBinaryDataSet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
+				"linkedServiceName": {
+					"referenceName": "Win10Pro_LinkedService",
+					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "PipelinesFolder01"
+					"name": "PulseContactsToIseries"
 				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/InputBinaryDataSet')]",
-				"[concat(variables('factoryId'), '/datasets/OutputBinaryDataSet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MoveFileFromInputToOutputStorageAccount')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "testing",
-				"activities": [
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
 					{
-						"name": "Simply Copy CSV File",
-						"description": "tetsing",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Setting FirstName 2",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "EmailCsvFileDataSet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "OutputArchiveFolder",
-								"type": "DatasetReference",
-								"parameters": {
-									"ArchiveFileName": {
-										"value": "@concat(variables('FirstName'),'.csv')",
-										"type": "Expression"
-									}
-								}
-							}
-						]
+						"name": "BusinessEntityID",
+						"type": "int",
+						"precision": 10
 					},
 					{
-						"name": "Setting FirstName 2",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Delete contact file",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "UserProperty",
-								"value": "value for user property"
-							}
-						],
-						"typeProperties": {
-							"variableName": "FirstName",
-							"value": "Slava"
-						}
+						"name": "NationalIDNumber",
+						"type": "nvarchar"
 					},
 					{
-						"name": "Delete contact file",
-						"type": "Delete",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "OutputArchiveFolder",
-								"type": "DatasetReference",
-								"parameters": {
-									"ArchiveFileName": "some-text"
-								}
-							},
-							"enableLogging": false,
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"wildcardFileName": "*contact*",
-								"enablePartitionDiscovery": false
-							}
-						}
+						"name": "LoginID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OrganizationNode",
+						"type": "hierarchyid"
+					},
+					{
+						"name": "OrganizationLevel",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "JobTitle",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BirthDate",
+						"type": "date"
+					},
+					{
+						"name": "MaritalStatus",
+						"type": "nchar"
+					},
+					{
+						"name": "Gender",
+						"type": "nchar"
+					},
+					{
+						"name": "HireDate",
+						"type": "date"
+					},
+					{
+						"name": "SalariedFlag",
+						"type": "bit"
+					},
+					{
+						"name": "VacationHours",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "SickLeaveHours",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "CurrentFlag",
+						"type": "bit"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
 				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"FirstName": {
-						"type": "String",
-						"defaultValue": "No-Name"
-					}
-				},
-				"folder": {
-					"name": "PipelinesFolder01"
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-03-07T13:02:22Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/EmailCsvFileDataSet')]",
-				"[concat(variables('factoryId'), '/datasets/OutputArchiveFolder')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataSetWithInputCsvFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "email-password-recovery-code.csv",
-						"folderPath": "InputCsvFile",
-						"container": "input-folder"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Login email;Identifier;One-time password;Recovery code;First name;Last name;Department;Location",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataWithOutputCsvFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "email-password-recovery-code.csv",
-						"folderPath": "OutputCsvFile",
-						"container": "output-folder"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Login email;Identifier;One-time password;Recovery code;First name;Last name;Department;Location",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EmailCsvFileDataSet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "email.csv",
-						"container": "input-folder"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Login email;Identifier;First name;Last name",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/InputBinaryDataSet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "no description",
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "MyFolder",
-						"container": "input-folder"
-					}
+					"schema": "HumanResources",
+					"table": "Employee"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
+				"[concat(variables('factoryId'), '/linkedServices/Win10Pro_LinkedService')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OutputArchiveFolder')]",
+			"name": "[concat(parameters('factoryName'), '/PulseContacts_Dataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -482,51 +253,41 @@
 					"referenceName": "AzureBlobStorageLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"ArchiveFileName": {
-						"type": "String"
-					}
+				"folder": {
+					"name": "PulseContactsToIseries"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().ArchiveFileName",
-							"type": "Expression"
-						},
-						"container": "output-folder"
+						"fileName": "PulseContacts.csv",
+						"folderPath": "output",
+						"container": "pulse-contacts-to-iseries"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/OutputBinaryDataSet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "TargetFolder",
-						"container": "output-folder"
+				"schema": [
+					{
+						"name": "AddressID",
+						"type": "String"
+					},
+					{
+						"name": " AddressLine1",
+						"type": "String"
+					},
+					{
+						"name": " City",
+						"type": "String"
+					},
+					{
+						"name": " ModifiedDate",
+						"type": "String"
 					}
-				}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
@@ -546,12 +307,46 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SelfHostIntegrationRuntime')]",
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Azure Sql Database",
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Win10Pro_LinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Linked Service to Virtaul Machine win10Pro",
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('Win10Pro_LinkedService_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "Win10Pro-IR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Win10Pro-IR')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"type": "SelfHosted",
-				"description": "For testing purposes",
+				"description": "IR to my virtual machine on Win10Pro",
 				"typeProperties": {}
 			},
 			"dependsOn": []
