@@ -1,7 +1,0 @@
-{
-	"name": "SelfHostIntegrationRuntime",
-	"properties": {
-		"type": "SelfHosted",
-		"description": "For testing purposes"
-	}
-}
