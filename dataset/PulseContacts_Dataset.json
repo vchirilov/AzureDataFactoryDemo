@@ -13,8 +13,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "test.csv",
-				"folderPath": "output",
+				"fileName": "PulseContacts.csv",
+				"folderPath": "Output",
 				"container": "pulse-contacts-to-iseries"
 			},
 			"columnDelimiter": ",",
