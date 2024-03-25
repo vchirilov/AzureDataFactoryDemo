@@ -9,8 +9,7 @@
 		},
 		"AzureBlobStorageLinkedService_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'",
-			"defaultValue": "DefaultEndpointsProtocol=https;AccountName=saforazuredatafactory;EndpointSuffix=core.windows.net;"
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
 		},
 		"AzureSqlDatabase_connectionString": {
 			"type": "secureString",
@@ -22,7 +21,11 @@
 		},
 		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
 			"type": "string",
-			"defaultValue": "https://kv-greeneking-demo.vault.azure.net/"
+			"defaultValue": "https://kv-greeneking-poc.vault.azure.net/"
+		},
+		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "saforazuredatafactory-connection-string"
 		}
 	},
 	"variables": {
@@ -255,7 +258,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedService",
+					"referenceName": "AzureBlobStorageUsingKV_LinkedService",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
@@ -295,7 +298,7 @@
 				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageUsingKV_LinkedService')]"
 			]
 		},
 		{
@@ -306,20 +309,10 @@
 				"annotations": [],
 				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorageLinkedService_connectionString')]",
-					"accountKey": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "KeyVault_LinkedService",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "saforazuredatafactory-connection-string"
-					}
+					"connectionString": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/KeyVault_LinkedService')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
@@ -371,7 +364,6 @@
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "A key-vault instance for secrets providers",
 				"annotations": [],
 				"type": "AzureKeyVault",
 				"typeProperties": {
@@ -379,6 +371,28 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageUsingKV_LinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "KeyVault_LinkedService",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/KeyVault_LinkedService')]"
+			]
 		}
 	]
 }

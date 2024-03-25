@@ -6,7 +6,7 @@
 			"value": "adf-greeneking-demo"
 		},
 		"AzureBlobStorageLinkedService_connectionString": {
-			"value": "DefaultEndpointsProtocol=https;AccountName=saforazuredatafactory;EndpointSuffix=core.windows.net;"
+			"value": ""
 		},
 		"AzureSqlDatabase_connectionString": {
 			"value": ""
@@ -15,7 +15,10 @@
 			"value": ""
 		},
 		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
-			"value": "https://kv-greeneking-demo.vault.azure.net/"
+			"value": "https://kv-greeneking-poc.vault.azure.net/"
+		},
+		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
+			"value": "saforazuredatafactory-connection-string"
 		}
 	}
 }
