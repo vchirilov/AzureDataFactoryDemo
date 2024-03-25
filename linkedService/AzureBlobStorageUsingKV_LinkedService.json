@@ -1,0 +1,17 @@
+{
+	"name": "AzureBlobStorageUsingKV_LinkedService",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "KeyVault_LinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "saforazuredatafactory-connection-string"
+			}
+		}
+	}
+}
