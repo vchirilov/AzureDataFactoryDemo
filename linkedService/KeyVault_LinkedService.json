@@ -1,0 +1,11 @@
+{
+	"name": "KeyVault_LinkedService",
+	"properties": {
+		"description": "A key-vault instance for secrets providers",
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kv-greeneking-demo.vault.azure.net/"
+		}
+	}
+}
