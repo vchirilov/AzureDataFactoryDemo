@@ -9,7 +9,8 @@
 		},
 		"AzureBlobStorageLinkedService_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'",
+			"defaultValue": "DefaultEndpointsProtocol=https;AccountName=saforazuredatafactory;EndpointSuffix=core.windows.net;"
 		},
 		"AzureSqlDatabase_connectionString": {
 			"type": "secureString",
@@ -18,6 +19,10 @@
 		"Win10Pro_LinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
+		},
+		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-greeneking-demo.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -301,10 +306,20 @@
 				"annotations": [],
 				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
+					"connectionString": "[parameters('AzureBlobStorageLinkedService_connectionString')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "KeyVault_LinkedService",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "saforazuredatafactory-connection-string"
+					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/KeyVault_LinkedService')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
@@ -348,6 +363,20 @@
 				"type": "SelfHosted",
 				"description": "IR to my virtual machine on Win10Pro",
 				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/KeyVault_LinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "A key-vault instance for secrets providers",
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('KeyVault_LinkedService_properties_typeProperties_baseUrl')]"
+				}
 			},
 			"dependsOn": []
 		}
