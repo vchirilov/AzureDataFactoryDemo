@@ -2,7 +2,7 @@
 	"name": "PulseContacts_Dataset",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorageLinkedService",
+			"referenceName": "AzureBlobStorageUsingKV_LinkedService",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
