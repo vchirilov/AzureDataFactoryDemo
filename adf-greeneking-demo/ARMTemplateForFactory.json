@@ -7,10 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-greeneking-demo"
 		},
-		"AzureBlobStorageLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
-		},
 		"AzureSqlDatabase_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
@@ -19,13 +15,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
 		},
-		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://kv-greeneking-poc.vault.azure.net/"
-		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
 			"defaultValue": "saforazuredatafactory-connection-string"
+		},
+		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-greeneking-poc.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -53,7 +49,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT TOP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[Address]\n  ",
+								"sqlReaderQuery": "SELECT TP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[Address]\n  ",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -142,6 +138,59 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Call E-Mail Notification Service",
+						"description": "Send HTTP POST Request to E-Mail Notification Service",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "CopyPulseContacts",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"url": "https://prod-245.westeurope.logic.azure.com:443/workflows/96d58046d00247cda915e528e14ada8b/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=ubwxFZvluein_IcngW1Ctb_PgkCvHdi7dz_aQRBq_jY",
+							"body": {
+								"value": "{\n\"data-factory-name\":\"@{pipeline().DataFactory}\",\n\"error-message\":\"@{activity('CopyPulseContacts').Error.Message}\",\n\"Pipeline\":\"@{pipeline().Pipeline}\",\n\"RunId\":\"@{pipeline().RunId}\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Log Failed Pipeline",
+						"description": "Mark the pipeline as failed.",
+						"type": "Fail",
+						"dependsOn": [
+							{
+								"activity": "Call E-Mail Notification Service",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"message": {
+								"value": "@{activity('CopyPulseContacts').Error.Message}",
+								"type": "Expression"
+							},
+							"errorCode": "500"
+						}
 					}
 				],
 				"policy": {
@@ -302,17 +351,26 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageLinkedService')]",
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageUsingKV_LinkedService')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "KeyVault_LinkedService",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName')]"
+					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/KeyVault_LinkedService')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
@@ -324,6 +382,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDatabase_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/KeyVault_LinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('KeyVault_LinkedService_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -358,41 +429,6 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/KeyVault_LinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('KeyVault_LinkedService_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageUsingKV_LinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "KeyVault_LinkedService",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "[parameters('AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/KeyVault_LinkedService')]"
-			]
 		}
 	]
 }

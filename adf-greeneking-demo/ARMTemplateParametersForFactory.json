@@ -5,20 +5,17 @@
 		"factoryName": {
 			"value": "adf-greeneking-demo"
 		},
-		"AzureBlobStorageLinkedService_connectionString": {
-			"value": ""
-		},
 		"AzureSqlDatabase_connectionString": {
 			"value": ""
 		},
 		"Win10Pro_LinkedService_connectionString": {
 			"value": ""
 		},
-		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
-			"value": "https://kv-greeneking-poc.vault.azure.net/"
-		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"value": "saforazuredatafactory-connection-string"
+		},
+		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
+			"value": "https://kv-greeneking-poc.vault.azure.net/"
 		}
 	}
 }

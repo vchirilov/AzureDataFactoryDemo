@@ -7,10 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-greeneking-demo"
 		},
-		"AzureBlobStorageLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
-		},
 		"AzureSqlDatabase_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
@@ -33,19 +29,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -56,17 +39,6 @@
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDatabase_connectionString')]"
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Win10Pro-IR')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"description": "IR to my virtual machine on Win10Pro",
-				"typeProperties": {}
 			},
 			"dependsOn": []
 		},
@@ -84,24 +56,15 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Win10Pro_LinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/Win10Pro-IR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Linked Service to Virtaul Machine win10Pro",
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('Win10Pro_LinkedService_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "Win10Pro-IR",
-					"type": "IntegrationRuntimeReference"
-				}
+				"type": "SelfHosted",
+				"description": "IR to my virtual machine on Win10Pro",
+				"typeProperties": {}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageUsingKV_LinkedService')]",
@@ -123,6 +86,26 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/KeyVault_LinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Win10Pro_LinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Linked Service to Virtaul Machine win10Pro",
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('Win10Pro_LinkedService_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "Win10Pro-IR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]"
 			]
 		},
 		{
@@ -290,7 +273,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT TOP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[Address]\n  ",
+								"sqlReaderQuery": "SELECT TP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[Address]\n  ",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -379,6 +362,59 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Call E-Mail Notification Service",
+						"description": "Send HTTP POST Request to E-Mail Notification Service",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "CopyPulseContacts",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"url": "https://prod-245.westeurope.logic.azure.com:443/workflows/96d58046d00247cda915e528e14ada8b/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=ubwxFZvluein_IcngW1Ctb_PgkCvHdi7dz_aQRBq_jY",
+							"body": {
+								"value": "{\n\"data-factory-name\":\"@{pipeline().DataFactory}\",\n\"error-message\":\"@{activity('CopyPulseContacts').Error.Message}\",\n\"Pipeline\":\"@{pipeline().Pipeline}\",\n\"RunId\":\"@{pipeline().RunId}\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Log Failed Pipeline",
+						"description": "Mark the pipeline as failed.",
+						"type": "Fail",
+						"dependsOn": [
+							{
+								"activity": "Call E-Mail Notification Service",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"message": {
+								"value": "@{activity('CopyPulseContacts').Error.Message}",
+								"type": "Expression"
+							},
+							"errorCode": "500"
+						}
 					}
 				],
 				"policy": {

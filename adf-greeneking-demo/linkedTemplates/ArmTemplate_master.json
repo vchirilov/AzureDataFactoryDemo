@@ -7,10 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-greeneking-demo"
 		},
-		"AzureBlobStorageLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
-		},
 		"AzureSqlDatabase_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
@@ -19,13 +15,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
 		},
-		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://kv-greeneking-poc.vault.azure.net/"
-		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
 			"defaultValue": "saforazuredatafactory-connection-string"
+		},
+		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-greeneking-poc.vault.azure.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -53,9 +49,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"AzureBlobStorageLinkedService_connectionString": {
-						"value": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
 					},
 					"AzureSqlDatabase_connectionString": {
 						"value": "[parameters('AzureSqlDatabase_connectionString')]"
