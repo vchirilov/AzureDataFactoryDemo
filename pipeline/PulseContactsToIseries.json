@@ -104,6 +104,37 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "PackageName",
+				"description": "Set the package name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "CopyPulseContacts",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "pipelineReturnValue",
+					"value": [
+						{
+							"key": "ChildPipelineName",
+							"value": {
+								"type": "String",
+								"content": "AAAAA"
+							}
+						}
+					],
+					"setSystemVariable": true
+				}
 			}
 		],
 		"folder": {
