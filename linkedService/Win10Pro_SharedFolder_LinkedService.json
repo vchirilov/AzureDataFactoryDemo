@@ -1,0 +1,17 @@
+{
+	"name": "Win10Pro_SharedFolder_LinkedService",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "\\\\Win10Pro\\shared_temp_demo",
+			"userId": "Veaceslav",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJlYzFmOThhOS1lZDcxLTQxYWItOTE3Ny1hZGQzYjU2OWY2NjgiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "Win10Pro-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
