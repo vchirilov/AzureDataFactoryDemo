@@ -543,7 +543,14 @@
 					{
 						"name": "CopyPulseContacts",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "SetPipelineReturnValues",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -646,17 +653,10 @@
 						]
 					},
 					{
-						"name": "PackageName",
+						"name": "SetPipelineReturnValues",
 						"description": "Set the package name",
 						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "CopyPulseContacts",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"secureOutput": false,
 							"secureInput": false
@@ -668,8 +668,15 @@
 								{
 									"key": "ChildPipelineName",
 									"value": {
-										"type": "String",
-										"content": "AAAAA"
+										"type": "Expression",
+										"content": "@pipeline().Pipeline"
+									}
+								},
+								{
+									"key": "ChildPipelineRunId",
+									"value": {
+										"type": "Expression",
+										"content": "@pipeline().RunId"
 									}
 								}
 							],
@@ -741,7 +748,7 @@
 							},
 							"url": "https://prod-245.westeurope.logic.azure.com:443/workflows/96d58046d00247cda915e528e14ada8b/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=ubwxFZvluein_IcngW1Ctb_PgkCvHdi7dz_aQRBq_jY",
 							"body": {
-								"value": "{\n\"data-factory-name\":\"@{pipeline().DataFactory}\",\n\"error-message\":\"@{activity('PipelineEnvelope').Error.Message}\",\n\"Pipeline\":\"@{activity('PipelineEnvelope').output.pipelineReturnValue.ChildPipelineName}\",\n\"RunId\":\"@{pipeline().RunId}\"\n}",
+								"value": "{\n\"data-factory-name\":\"@{pipeline().DataFactory}\",\n\"error-message\":\"@{activity('PipelineEnvelope').Error.Message}\",\n\"Pipeline\":\"@{activity('PipelineEnvelope').output.pipelineReturnValue.ChildPipelineName}\",\n\"RunId\":\"@{activity('PipelineEnvelope').output.pipelineReturnValue.ChildPipelineRunId}\"\n}",
 								"type": "Expression"
 							}
 						}
