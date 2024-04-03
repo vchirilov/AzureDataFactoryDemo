@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
 		},
+		"LS_FileSystem_Win10Pro_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_FileSystem_Win10Pro'"
+		},
 		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://kv-greeneking-poc.vault.azure.net/"
@@ -22,6 +26,14 @@
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
 			"defaultValue": "saforazuredatafactory-connection-string"
+		},
+		"LS_FileSystem_Win10Pro_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\Win10Pro\\shared_temp_demo"
+		},
+		"LS_FileSystem_Win10Pro_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "Veaceslav"
 		}
 	},
 	"variables": {
@@ -67,6 +79,32 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/thia-export')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "thiassis"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageUsingKV_LinkedService')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -98,6 +136,30 @@
 				"type": "SqlServer",
 				"typeProperties": {
 					"connectionString": "[parameters('Win10Pro_LinkedService_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "Win10Pro-IR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FileSystem_Win10Pro')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_host')]",
+					"userId": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_FileSystem_Win10Pro_password')]"
+					}
 				},
 				"connectVia": {
 					"referenceName": "Win10Pro-IR",

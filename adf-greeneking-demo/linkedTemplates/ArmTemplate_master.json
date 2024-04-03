@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
 		},
+		"LS_FileSystem_Win10Pro_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_FileSystem_Win10Pro'"
+		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
 			"defaultValue": "saforazuredatafactory-connection-string"
@@ -22,6 +26,14 @@
 		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://kv-greeneking-poc.vault.azure.net/"
+		},
+		"LS_FileSystem_Win10Pro_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\Win10Pro\\shared_temp_demo"
+		},
+		"LS_FileSystem_Win10Pro_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "Veaceslav"
 		},
 		"containerUri": {
 			"type": "string",
@@ -56,11 +68,20 @@
 					"Win10Pro_LinkedService_connectionString": {
 						"value": "[parameters('Win10Pro_LinkedService_connectionString')]"
 					},
+					"LS_FileSystem_Win10Pro_password": {
+						"value": "[parameters('LS_FileSystem_Win10Pro_password')]"
+					},
 					"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
 						"value": "[parameters('KeyVault_LinkedService_properties_typeProperties_baseUrl')]"
 					},
 					"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 						"value": "[parameters('AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName')]"
+					},
+					"LS_FileSystem_Win10Pro_properties_typeProperties_host": {
+						"value": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_host')]"
+					},
+					"LS_FileSystem_Win10Pro_properties_typeProperties_userId": {
+						"value": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_userId')]"
 					}
 				}
 			},
