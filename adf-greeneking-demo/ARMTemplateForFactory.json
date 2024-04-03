@@ -11,13 +11,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
 		},
-		"Win10Pro_LinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
-		},
 		"LS_FileSystem_Win10Pro_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_FileSystem_Win10Pro'"
+		},
+		"Win10Pro_LinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
 		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
@@ -40,6 +40,95 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/GlobalErrorHandlerWrapper')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "PipelineEnvelope",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PulseContactsToIseriesTruncated",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Call E-Mail Notification Service",
+						"description": "Send HTTP POST Request to E-Mail Notification Service",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "PipelineEnvelope",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"url": "https://prod-245.westeurope.logic.azure.com:443/workflows/96d58046d00247cda915e528e14ada8b/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=ubwxFZvluein_IcngW1Ctb_PgkCvHdi7dz_aQRBq_jY",
+							"body": {
+								"value": "{\n\"data-factory-name\":\"@{pipeline().DataFactory}\",\n\"error-message\":\"@{activity('PipelineEnvelope').Error.Message}\",\n\"Pipeline\":\"@{pipeline().Pipeline}\",\n\"RunId\":\"@{pipeline().RunId}\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Log Failed Pipeline",
+						"description": "Mark the pipeline as failed.",
+						"type": "Fail",
+						"dependsOn": [
+							{
+								"activity": "Call E-Mail Notification Service",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"message": {
+								"value": "@{activity('PipelineEnvelope').Error.Message}",
+								"type": "Expression"
+							},
+							"errorCode": "500"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Templates"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PulseContactsToIseriesTruncated')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PulseContactsToIseries')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -412,6 +501,30 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_FileSystem_Win10Pro')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_host')]",
+					"userId": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_FileSystem_Win10Pro_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "Win10Pro-IR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Win10Pro_LinkedService')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -443,53 +556,272 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/thia-export')]",
+			"name": "[concat(parameters('factoryName'), '/PulseContactsToIseriesTruncated')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Wait1",
-						"type": "Wait",
+						"name": "CopyPulseContacts",
+						"type": "Copy",
 						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
-							"waitTimeInSeconds": 1
-						}
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT TP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[Address]\n  ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "AddressID",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "AddressID",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "AddressLine1",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "AddressLine1",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ModifiedDate",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										},
+										"sink": {
+											"name": "ModifiedDate",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AdventureWorks2022_Dataset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "PulseContacts_Dataset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "thiassis"
+					"name": "PulseIntegration"
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AdventureWorks2022_Dataset')]",
+				"[concat(variables('factoryId'), '/datasets/PulseContacts_Dataset')]"
+			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LS_FileSystem_Win10Pro')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/AdventureWorks2022_Dataset1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_host')]",
-					"userId": "[parameters('LS_FileSystem_Win10Pro_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('LS_FileSystem_Win10Pro_password')]"
-					}
+				"linkedServiceName": {
+					"referenceName": "Win10Pro_LinkedService",
+					"type": "LinkedServiceReference"
 				},
-				"connectVia": {
-					"referenceName": "Win10Pro-IR",
-					"type": "IntegrationRuntimeReference"
+				"folder": {
+					"name": "PulseContactsToIseries"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "BusinessEntityID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "NationalIDNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LoginID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OrganizationNode",
+						"type": "hierarchyid"
+					},
+					{
+						"name": "OrganizationLevel",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "JobTitle",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BirthDate",
+						"type": "date"
+					},
+					{
+						"name": "MaritalStatus",
+						"type": "nchar"
+					},
+					{
+						"name": "Gender",
+						"type": "nchar"
+					},
+					{
+						"name": "HireDate",
+						"type": "date"
+					},
+					{
+						"name": "SalariedFlag",
+						"type": "bit"
+					},
+					{
+						"name": "VacationHours",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "SickLeaveHours",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "CurrentFlag",
+						"type": "bit"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "HumanResources",
+					"table": "Employee"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]"
+				"[concat(variables('factoryId'), '/linkedServices/Win10Pro_LinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PulseContacts_Dataset1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageUsingKV_LinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "PulseContactsToIseries"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "PulseContacts.csv",
+						"folderPath": "Output",
+						"container": "pulse-contacts-to-iseries"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "AddressID",
+						"type": "String"
+					},
+					{
+						"name": " AddressLine1",
+						"type": "String"
+					},
+					{
+						"name": " City",
+						"type": "String"
+					},
+					{
+						"name": " ModifiedDate",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageUsingKV_LinkedService')]"
 			]
 		}
 	]

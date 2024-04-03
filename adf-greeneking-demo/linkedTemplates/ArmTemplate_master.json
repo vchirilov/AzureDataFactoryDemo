@@ -11,13 +11,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
 		},
-		"Win10Pro_LinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
-		},
 		"LS_FileSystem_Win10Pro_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_FileSystem_Win10Pro'"
+		},
+		"Win10Pro_LinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
 		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
@@ -65,11 +65,11 @@
 					"AzureSqlDatabase_connectionString": {
 						"value": "[parameters('AzureSqlDatabase_connectionString')]"
 					},
-					"Win10Pro_LinkedService_connectionString": {
-						"value": "[parameters('Win10Pro_LinkedService_connectionString')]"
-					},
 					"LS_FileSystem_Win10Pro_password": {
 						"value": "[parameters('LS_FileSystem_Win10Pro_password')]"
+					},
+					"Win10Pro_LinkedService_connectionString": {
+						"value": "[parameters('Win10Pro_LinkedService_connectionString')]"
 					},
 					"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
 						"value": "[parameters('KeyVault_LinkedService_properties_typeProperties_baseUrl')]"

@@ -8,10 +8,10 @@
 		"AzureSqlDatabase_connectionString": {
 			"value": ""
 		},
-		"Win10Pro_LinkedService_connectionString": {
+		"LS_FileSystem_Win10Pro_password": {
 			"value": ""
 		},
-		"LS_FileSystem_Win10Pro_password": {
+		"Win10Pro_LinkedService_connectionString": {
 			"value": ""
 		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
