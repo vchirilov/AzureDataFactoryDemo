@@ -7,7 +7,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "PackageName",
+						"activity": "SetPipelineReturnValues",
 						"dependencyConditions": [
 							"Completed"
 						]
@@ -113,7 +113,7 @@
 				]
 			},
 			{
-				"name": "PackageName",
+				"name": "SetPipelineReturnValues",
 				"description": "Set the package name",
 				"type": "SetVariable",
 				"dependsOn": [],
@@ -129,7 +129,7 @@
 							"key": "ChildPipelineName",
 							"value": {
 								"type": "String",
-								"content": "BBB"
+								"content": "PulseContactsToIseries"
 							}
 						}
 					],
