@@ -1,5 +1,5 @@
 {
-	"name": "PulseContactsToIseries",
+	"name": "PulseContactsToIseriesWithErrorHandling",
 	"properties": {
 		"activities": [
 			{
@@ -160,7 +160,7 @@
 			}
 		],
 		"folder": {
-			"name": "PulseIntegration"
+			"name": "PulseIntegration-1"
 		},
 		"annotations": []
 	}

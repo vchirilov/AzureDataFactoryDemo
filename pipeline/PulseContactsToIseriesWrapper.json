@@ -1,6 +1,7 @@
 {
-	"name": "GlobalErrorHandlerWrapper",
+	"name": "PulseContactsToIseriesWrapper",
 	"properties": {
+		"description": "details here",
 		"activities": [
 			{
 				"name": "PipelineEnvelope",
@@ -52,7 +53,7 @@
 			}
 		],
 		"folder": {
-			"name": "Common Pipelines"
+			"name": "PulseIntegration-2"
 		},
 		"annotations": []
 	}
