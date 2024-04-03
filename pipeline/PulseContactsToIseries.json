@@ -129,7 +129,7 @@
 							"key": "ChildPipelineName",
 							"value": {
 								"type": "String",
-								"content": "AAAAA"
+								"content": "@{pipeline().Pipeline}"
 							}
 						}
 					],
