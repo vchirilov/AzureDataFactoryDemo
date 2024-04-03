@@ -49,31 +49,10 @@
 						"type": "Expression"
 					}
 				}
-			},
-			{
-				"name": "Log Failed Pipeline",
-				"description": "Mark the pipeline as failed.",
-				"type": "Fail",
-				"dependsOn": [
-					{
-						"activity": "Call E-Mail Notification Service",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"message": {
-						"value": "@{activity('PipelineEnvelope').Error.Message}",
-						"type": "Expression"
-					},
-					"errorCode": "500"
-				}
 			}
 		],
 		"folder": {
-			"name": "Templates"
+			"name": "Common Pipelines"
 		},
 		"annotations": []
 	}
