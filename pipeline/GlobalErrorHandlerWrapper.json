@@ -12,7 +12,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PulseContactsToIseries",
+						"referenceName": "PulseContactsToIseriesTruncated",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
