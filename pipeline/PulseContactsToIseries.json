@@ -128,8 +128,15 @@
 						{
 							"key": "ChildPipelineName",
 							"value": {
-								"type": "String",
-								"content": "PulseContactsToIseries"
+								"type": "Expression",
+								"content": "@pipeline().Pipeline"
+							}
+						},
+						{
+							"key": "ChildPipelineRunId",
+							"value": {
+								"type": "Expression",
+								"content": "@pipeline().RunId"
 							}
 						}
 					],
