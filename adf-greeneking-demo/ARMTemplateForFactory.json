@@ -253,8 +253,6 @@
 					{
 						"name": "CopyPulseContacts_Success",
 						"type": "Copy",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -360,8 +358,6 @@
 					{
 						"name": "CopyPulseContacts_Success_FailAddress",
 						"type": "Copy",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
