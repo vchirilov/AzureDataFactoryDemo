@@ -440,6 +440,8 @@
 					{
 						"name": "CopyPulseContacts_Success",
 						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "SetPipelineReturnValues",
@@ -552,6 +554,8 @@
 					{
 						"name": "CopyPulseContacts_Success_FailAddress",
 						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "SetPipelineReturnValues",
