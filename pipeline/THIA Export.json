@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "CopyPulseContacts",
+				"name": "Export Invoices to a CSV file",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -111,7 +111,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "CopyPulseContacts",
+						"activity": "Export Invoices to a CSV file",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -164,7 +164,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "CopyPulseContacts",
+						"activity": "Export Invoices to a CSV file",
 						"dependencyConditions": [
 							"Succeeded"
 						]
