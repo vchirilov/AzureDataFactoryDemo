@@ -12,7 +12,7 @@
 			"value": ""
 		},
 		"Win10Pro_LinkedService_connectionString": {
-			"value": ""
+			"value": "Integrated Security=False;Data Source=Win10Pro;Initial Catalog=AdventureWorks2022;User ID=sa"
 		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"value": "saforazuredatafactory-connection-string"

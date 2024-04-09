@@ -17,7 +17,8 @@
 		},
 		"Win10Pro_LinkedService_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
+			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'",
+			"defaultValue": "Integrated Security=False;Data Source=Win10Pro;Initial Catalog=AdventureWorks2022;User ID=sa"
 		},
 		"AzureBlobStorageUsingKV_LinkedService_properties_typeProperties_connectionString_secretName": {
 			"type": "string",

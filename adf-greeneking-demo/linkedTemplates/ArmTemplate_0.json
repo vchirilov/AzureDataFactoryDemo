@@ -17,7 +17,8 @@
 		},
 		"Win10Pro_LinkedService_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'"
+			"metadata": "Secure string for 'connectionString' of 'Win10Pro_LinkedService'",
+			"defaultValue": "Integrated Security=False;Data Source=Win10Pro;Initial Catalog=AdventureWorks2022;User ID=sa"
 		},
 		"KeyVault_LinkedService_properties_typeProperties_baseUrl": {
 			"type": "string",
@@ -133,7 +134,15 @@
 				"annotations": [],
 				"type": "SqlServer",
 				"typeProperties": {
-					"connectionString": "[parameters('Win10Pro_LinkedService_connectionString')]"
+					"connectionString": "[parameters('Win10Pro_LinkedService_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "KeyVault_LinkedService",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "win10-pro-sql-server-password"
+					}
 				},
 				"connectVia": {
 					"referenceName": "Win10Pro-IR",
@@ -141,7 +150,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/Win10Pro-IR')]",
+				"[concat(variables('factoryId'), '/linkedServices/KeyVault_LinkedService')]"
 			]
 		},
 		{
@@ -465,7 +475,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT TOP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[TheAddress]\n  ",
+								"sqlReaderQuery": "SELECT TOP (100) \n[AddressID],\n[AddressLine1],\n[City],\n[ModifiedDate]\nFROM [AdventureWorks2022].[Person].[Address]\n  ",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
