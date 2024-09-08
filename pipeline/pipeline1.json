@@ -1,0 +1,32 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetOAuthToken",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Conten-Type": "application/x-www-form-urlencoded"
+					},
+					"url": "https://login.microsoftonline.com/544f8ac3-ce4c-47d1-9b72-284ac54b8d1c/oauth2/v2.0/token",
+					"body": "tenant=544f8ac3-ce4c-47d1-9b72-284ac54b8d1c&client_id=b5568604-042e-49a9-96fc-71a454b2b422&client_secret=84e95e8d-bc69-4f00-8e2f-61cfe5d00d7e&grant_type=client_credentials&scope=api://b5568604-042e-49a9-96fc-71a454b2b422/Expense.SPA\n"
+				}
+			}
+		],
+		"folder": {
+			"name": "Amdaris-ExpenseManagement"
+		},
+		"annotations": []
+	}
+}
