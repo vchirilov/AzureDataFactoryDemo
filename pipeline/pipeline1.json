@@ -17,11 +17,11 @@
 				"typeProperties": {
 					"method": "POST",
 					"headers": {
-						"Conten-Type": "application/x-www-form-urlencoded"
+						"Content-Type": "application/x-www-form-urlencoded"
 					},
 					"url": "https://login.microsoftonline.com/544f8ac3-ce4c-47d1-9b72-284ac54b8d1c/oauth2/v2.0/token",
 					"body": {
-						"value": "{\n  \"tenant\": \"544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\",\n  \"client_id\": \"b5568604-042e-49a9-96fc-71a454b2b422\",\n  \"client_secret\": \"84e95e8d-bc69-4f00-8e2f-61cfe5d00d7e\",\n  \"grant_type\": \"client_credentials\",\n  \"scope\": \"api://b5568604-042e-49a9-96fc-71a454b2b422/Expense.SPA\"\n}",
+						"value": "{\n  \"tenant\": \"544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\",\n  \"client_id\": \"b5568604-042e-49a9-96fc-71a454b2b422\",\n  \"client_secret\": \"xHP8Q~s-08-hX-~Z23w1gQx7C68QFQYdTji5KcG8\",\n  \"grant_type\": \"client_credentials\",\n  \"scope\": \"api://b5568604-042e-49a9-96fc-71a454b2b422/Expense.SPA\"\n}",
 						"type": "Expression"
 					}
 				}
