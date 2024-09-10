@@ -21,7 +21,7 @@
 					},
 					"url": "https://login.microsoftonline.com/544f8ac3-ce4c-47d1-9b72-284ac54b8d1c/oauth2/v2.0/token",
 					"body": {
-						"value": "tenant=544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\n&client_id=b5568604-042e-49a9-96fc-71a454b2b422\n&client_secret=UnQ8Q~Mr31~3SjFQWg.VwmYyDjz9vPur0jnuudwJ\n&grant_type=client_credentials\n&scope=api://b5568604-042e-49a9-96fc-71a454b2b422",
+						"value": "tenant=544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\n&client_id=b5568604-042e-49a9-96fc-71a454b2b422\n&client_secret=UnQ8Q~Mr31~3SjFQWg.VwmYyDjz9vPur0jnuudwJ\n&grant_type=client_credentials\n&scope=api://b5568604-042e-49a9-96fc-71a454b2b422/.default",
 						"type": "Expression"
 					}
 				}
