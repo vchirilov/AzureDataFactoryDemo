@@ -5,6 +5,8 @@
 			{
 				"name": "GetOAuthToken",
 				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -22,6 +24,33 @@
 					"url": "https://login.microsoftonline.com/544f8ac3-ce4c-47d1-9b72-284ac54b8d1c/oauth2/v2.0/token",
 					"body": {
 						"value": "tenant=544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\n&client_id=b5568604-042e-49a9-96fc-71a454b2b422\n&client_secret=UnQ8Q~Mr31~3SjFQWg.VwmYyDjz9vPur0jnuudwJ\n&grant_type=client_credentials\n&scope=api://b5568604-042e-49a9-96fc-71a454b2b422/.default",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Auth_Code",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"url": {
+						"value": "https://login.microsoftonline.com/544f8ac3-ce4c-47d1-9b72-284ac54b8d1c/oauth2/v2.0/authorize",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "tenant=544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\n&client_id=b5568604-042e-49a9-96fc-71a454b2b422\n&client_secret=UnQ8Q~Mr31~3SjFQWg.VwmYyDjz9vPur0jnuudwJ\n&grant_type=authorization_code\n&scope=api://b5568604-042e-49a9-96fc-71a454b2b422/Expense.SPA",
 						"type": "Expression"
 					}
 				}
