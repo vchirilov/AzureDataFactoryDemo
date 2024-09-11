@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "GetOAuthToken",
+				"name": "client_credentials",
 				"type": "WebActivity",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
@@ -29,7 +29,7 @@
 				}
 			},
 			{
-				"name": "Auth_Code",
+				"name": "authorization_code",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
