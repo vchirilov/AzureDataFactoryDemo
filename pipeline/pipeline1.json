@@ -50,7 +50,7 @@
 						"type": "Expression"
 					},
 					"body": {
-						"value": "tenant=544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\n&client_id=b5568604-042e-49a9-96fc-71a454b2b422\n&client_secret=UnQ8Q~Mr31~3SjFQWg.VwmYyDjz9vPur0jnuudwJ\n&grant_type=authorization_code\n&scope=api://b5568604-042e-49a9-96fc-71a454b2b422/Expense.SPA",
+						"value": "tenant=544f8ac3-ce4c-47d1-9b72-284ac54b8d1c\n&callback_url=http://localhost:5118/signin-oidc\n&client_id=b5568604-042e-49a9-96fc-71a454b2b422\n&client_secret=UnQ8Q~Mr31~3SjFQWg.VwmYyDjz9vPur0jnuudwJ\n&grant_type=authorization_code\n&scope=api://b5568604-042e-49a9-96fc-71a454b2b422/Expense.SPA",
 						"type": "Expression"
 					}
 				}
